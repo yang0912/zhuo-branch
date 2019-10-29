@@ -1,34 +1,40 @@
 import React from 'react';
 import Layout from '../components/layout';
 
-import { graphql, useStaticQuery} from 'gatsby';
+import { Link, graphql, useStaticQuery} from 'gatsby';
 
 
 const Page1 = () =>{
     const data = useStaticQuery(graphql`
-    query {
-        allMarkdownRemark{
+    query{
+        allContentfulNewsPost(
+          sort:{
+            fields: publishedDate,
+            order:DESC
+          }
+        ){
           edges{
             node{
-             frontmatter{
-                title
-                date
+              title
+              slug
+              publishedDate(formatString:"MMMM Do, YYYY")
             }
-           }
           }
         }
-      }                                             
+      }
     `)
     console.log(data)
     return(
         <Layout>
             <h1>Page1</h1>
             <ol>
-                {data.allMarkdownRemark.edges.map((edge)=>{
+                {data.allContentfulNewsPost.edges.map((edge)=>{
                     return(
                         <li>
-                            <h2>{edge.node.frontmatter.title}</h2>
-                            <p>{edge.node.frontmatter.date}</p>
+                            <Link to={`/page1/${edge.node.slug}`}>
+                                <h2>{edge.node.title}</h2>
+                                <p>{edge.node.publishedDate}</p>
+                            </Link>
                         </li>
                     )
                 })}
